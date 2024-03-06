@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import Table from "./tables";
+import { useState } from "react";
+import Table from "./table";
 import './App.css'
+import PropTypes from 'prop-types';
+
 
 const App = () => {
   const [data, setData] = useState([
     {  distance: 1, minutes: 6,seconds:30 },
   ]);
 
-  const [distance, setDistance] = useState(0)
-  const [seconds, setSeconds] = useState(0)
+  // const [distance, setDistance] = useState(0)
+  // const [seconds, setSeconds] = useState(0)
   const [calculate, setCalculate] = useState("");
   const [editing, setEditing] = useState(false);
 
@@ -37,7 +39,7 @@ const App = () => {
 
   const handleCalculate = () =>{
     let distance = 0;
-    let minutes = 0;
+    // let minutes = 0;
     let seconds = 0;
 
     data.map((row) =>{
@@ -50,8 +52,8 @@ const App = () => {
      
     })
     console.log(seconds);
-    setDistance(distance);
-    setSeconds(seconds);
+    // setDistance(distance);
+    // setSeconds(seconds);
     setCalculate(true);
 
     let paceMin = (seconds/distance)/60
@@ -78,7 +80,7 @@ const App = () => {
   return (
     <div>
 
-      <h1>Giancarlo's Pace Calculator</h1>
+      <h1>Running Pace Calculator</h1>
 
 
     <div className="tables" >
@@ -98,6 +100,11 @@ const App = () => {
     </div>
 
   );
+};
+
+App.propTypes = {
+  pace: PropTypes.string,
+  isEditing: PropTypes.bool
 };
 
 export default App;
