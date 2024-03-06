@@ -8,7 +8,7 @@ const App = () => {
   const [data, setData] = useState([
     { distance: 1, minutes: 6, seconds: 30 },
   ]);
-  const [calculate, setCalculate] = useState("");
+  const [calculatedPace, setPace] = useState("");
   const [editing, setEditing] = useState(false);
 
   const columns = [
@@ -31,28 +31,48 @@ const App = () => {
   };
 
   const handleAddRow = () => {
-    setData([...data, { distance: 1, minutes: 0, seconds: 0 }]);
+    // Check if there is at least one row to copy from
+    if (data.length > 0) {
+      const firstRow = data[0];
+      setData([...data, { ...firstRow }]);
+    } else {
+      // Optional: Handle the case where there are no existing rows to copy from
+      // For example, you can add a row with predefined default values
+      setData([...data, { distance: 1, minutes: 0, seconds: 0 }]);
+    }
   };
+  
 
   const handleCalculate = () => {
     let totalDistance = 0;
     let totalSeconds = 0;
+  
     data.forEach(row => {
-      if (Number(row.distance) > 0) { // Ensure valid distance
-        totalDistance += Number(row.distance);
-        totalSeconds += Number(row.seconds) + (Number(row.minutes) * 60);
+      // Convert all values to numbers to avoid unexpected JavaScript type coercion
+      const distance = Number(row.distance);
+      const seconds = Number(row.seconds);
+      const minutes = Number(row.minutes);
+  
+      // Accumulate total distance and time only if distance is positive
+      if (distance > 0) {
+        totalDistance += distance;
+        totalSeconds += seconds + (minutes * 60);
       }
     });
-
-    if (totalDistance > 0) { // Avoid division by zero
-      const paceMin = Math.floor(totalSeconds / totalDistance / 60);
-      const paceSec = ((totalSeconds / totalDistance) % 60).toFixed(2); // Keep precision for seconds
-      setCalculate(`Ran ${totalDistance} miles at ${paceMin} min ${paceSec} sec pace`);
+  
+    // Check to prevent division by zero and ensure there is valid data
+    if (totalDistance > 0) {
+      const paceMinutes = Math.floor(totalSeconds / totalDistance / 60);
+      const paceSeconds = Math.floor((totalSeconds / totalDistance) % 60);
+      setPace(`Ran ${totalDistance} miles at ${paceMinutes} min ${paceSeconds} sec pace`);
     } else {
-      setCalculate("Invalid data for calculation."); // Handle case with no valid distance
+      // Optionally, set some default state or message if there's no distance to calculate pace
+      setPace('No valid distance provided to calculate pace.');
     }
-    setEditing(false); // Move out of the if-else to ensure it always sets editing to false after calculation
+  
+    setEditing(false); // Update editing state irrespective of the calculation outcome
   };
+  
 
   // Define the Response component within App if it's only used here
   function Response({ pace, isEditing }) {
@@ -70,10 +90,11 @@ const App = () => {
         <button onClick={handleAddRow}>Add Row</button>
         <button onClick={handleCalculate}>Calculate</button>
       </div>
-      <Response pace={calculate} isEditing={editing} />
+      <Response pace={calculatedPace} isEditing={editing} />
     </div>
   );
 };
+
 
 App.propTypes = {
   pace: PropTypes.string,
