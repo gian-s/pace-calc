@@ -31,16 +31,12 @@ const App = () => {
   };
 
   const handleAddRow = () => {
-    // Check if there is at least one row to copy from
     if (data.length > 0) {
       const firstRow = data[0];
-      setData([...data, { ...firstRow }]);
-    } else {
-      // Optional: Handle the case where there are no existing rows to copy from
-      // For example, you can add a row with predefined default values
-      setData([...data, { distance: 1, minutes: 0, seconds: 0 }]);
+      setData([...data, { ...firstRow }]); // Creates a new object with the same properties as the first row
     }
   };
+  
   
 
   const handleCalculate = () => {
@@ -85,7 +81,9 @@ const App = () => {
   return (
     <div>
       <h1>Giancarlo's Running Pace Calculator</h1>
-      <Table data={data} columns={columns} handleEdit={handleEdit} handleDelete={handleDelete} />
+      <div className="table-container">
+        <Table data={data} columns={columns} handleEdit={handleEdit} handleDelete={handleDelete} />
+      </div>
       <div className="button-group">
         <button onClick={handleAddRow}>Add Row</button>
         <button onClick={handleCalculate}>Calculate</button>
