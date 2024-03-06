@@ -6,18 +6,47 @@
   text-align: center;
 }
 
-.table {
+.table-container {
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  width: 100%; /* Ensures the container takes full width */
+}
 
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-
+.table { /* Assuming .table is your table's class */
+  width: auto; /* Or 100% if it should stretch */
+  max-width: 100%; /* Prevents the table from overflowing its container */
+  margin: 0 auto; /* Centering for block element, effective if width is less than container's width */
+  overflow-x: auto; /* For horizontal scrolling on small screens */
 }
 
 
-.button-group{
-  padding-top:50px;
-  padding-right:75px;
+.button-group, .output {
+  display: flex;
+  justify-content: center;
+  padding: 20px; /* Or any suitable padding */
 }
+
+
+.header {
+  background-color: #4b4b4b; /* Choose a background color that fits your design */
+  color: white; /* Text color */
+  text-align: center; /* Center the text horizontally */
+  padding: 20px 0; /* Add some padding above and below the text */
+  width: 100%; /* Make the header extend full width */
+  position: fixed; /* Fix position to the top of the page */
+  top: 0; /* Position at the very top of the page */
+  left: 0; /* Align to the left of the page */
+  z-index: 1000; /* Ensure the header is above other content */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* Optional: adds a shadow for a lifting effect */
+}
+
+.highlight {
+  background-color: #4b4b4b; /* Light gray background */
+  border: 1px solid #dcdcdc; /* Slightly darker border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 2px 6px; /* Top and bottom, Left and right padding */
+  margin: 0 2px; /* Space out inline elements */
+  display: inline-block;
+  font-weight: bold; /* Make text bold */
+}
+

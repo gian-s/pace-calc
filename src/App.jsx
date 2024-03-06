@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import Table from "./tables";
-import './App.css'
+/* eslint-disable react/no-unescaped-entities */
+import { useState } from 'react';
+import Table from "./table";
+import './App.css';
+import PropTypes from 'prop-types';
 
 const App = () => {
   const [data, setData] = useState([
-    {  distance: 1, minutes: 6,seconds:30 },
+    { distance: 1, minutes: 6, seconds: 30 },
   ]);
-
-  const [distance, setDistance] = useState(0)
-  const [seconds, setSeconds] = useState(0)
-  const [calculate, setCalculate] = useState("");
+  // const [calculatedPace, setPace] = useState("");
   const [editing, setEditing] = useState(false);
+  const [paceData, setPaceData] = useState(null);
 
   const columns = [
     { id: "distance", title: "Distance in mi" },
     { id: "minutes", title: "Minute" },
-    {id:"seconds", title:"Second"}
+    { id: "seconds", title: "Second" }
   ];
 
   const handleEdit = (rowIndex, columnId, newValue) => {
@@ -32,73 +32,91 @@ const App = () => {
   };
 
   const handleAddRow = () => {
-    setData([...data, { distance: 1, minutes: 0 , seconds:0}]);
-  };
-
-  const handleCalculate = () =>{
-    let distance = 0;
-    let minutes = 0;
-    let seconds = 0;
-
-    data.map((row) =>{
-      if(Number(row.distance) > 0 ){
-
-        distance += Number(row.distance)
-        seconds += (Number(row.seconds) +(Number(row.minutes)*60) )
-
-      }
-     
-    })
-    console.log(seconds);
-    setDistance(distance);
-    setSeconds(seconds);
-    setCalculate(true);
-
-    let paceMin = (seconds/distance)/60
-
-    let floor = Math.floor((seconds/distance)/60)
-
-    let paceSec = (paceMin - floor) * 60
-    let paceStr = "Ran "+ distance +" miles at " + floor + " min " + paceSec.toFixed(2) + " sec pace";
-    
-    setCalculate(paceStr);
-    setEditing(false);
-    
-  }
-
-  function Response({pace, isEditing}){
-
-    if(pace.length > 0 && !isEditing){
-      return(
-        <h3>{pace}</h3>
-      )
+    if (data.length > 0) {
+      const firstRow = data[0];
+      setData([...data, { ...firstRow }]); // Creates a new object with the same properties as the first row
     }
+  };
+  
+  
+
+  const handleCalculate = () => {
+    let totalDistance = 0;
+    let totalSeconds = 0;
+  
+    data.forEach(row => {
+      const distance = Number(row.distance);
+      const seconds = Number(row.seconds);
+      const minutes = Number(row.minutes);
+  
+      if (distance > 0) {
+        totalDistance += distance;
+        totalSeconds += seconds + (minutes * 60);
+      }
+    });
+  
+    if (totalDistance > 0) {
+      const paceMinutes = Math.floor(totalSeconds / totalDistance / 60);
+      const paceSeconds = Math.floor((totalSeconds / totalDistance) % 60);
+      setPaceData({ totalDistance, paceMinutes, paceSeconds });
+    } else {
+      // Here you should update the state to reflect there's no valid pace data
+      setPaceData(null); // Indicate that there's no valid data
+    }
+    setEditing(false); // Update editing state irrespective of the calculation outcome
+  };
+  
+  
+
+  // Define the Response component within App if it's only used here
+  function Response({ paceData, isEditing }) {
+    // Ensure paceData exists and editing is not active
+    if (paceData && !isEditing) {
+      return (
+        <h3>
+          <span className="highlight">{paceData.totalDistance} miles</span> at 
+          <span className="highlight">{paceData.paceMinutes} min</span> 
+          <span className="highlight">{paceData.paceSeconds} sec</span> average pace
+        </h3>
+      );
+    } else if (!isEditing) { // Handle case where there's no valid data but editing is not active
+      return <h3>No valid distance provided to calculate pace.</h3>;
+    }
+    return null; // Return null to render nothing when conditions are not met
   }
+  
+  Response.propTypes = {
+    paceData: PropTypes.shape({
+      totalDistance: PropTypes.number,
+      paceMinutes: PropTypes.number,
+      paceSeconds: PropTypes.number,
+    }),
+    isEditing: PropTypes.bool,
+  };
+  
 
   return (
     <div>
-
-      <h1>Giancarlo's Pace Calculator</h1>
-
-
-    <div className="tables" >
-      <Table
-        data={data}
-        columns={columns}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
+      <div className="header">
+        <h1>Giancarlo's Running Pace Calculator</h1>
+      </div>
+      <div className="table-container">
+        <Table data={data} columns={columns} handleEdit={handleEdit} handleDelete={handleDelete} />
+      </div>
+      <div className="button-group">
+        <button onClick={handleAddRow}>Add Row</button>
+        <button onClick={handleCalculate}>Calculate</button>
+      </div>
+      <Response paceData={paceData} isEditing={editing} />
     </div>
-    <div className="button-group">
-    <button onClick={handleAddRow}>Add Row</button> <button onClick={handleCalculate}> Calculate</button>
-      <Response pace={calculate} isEditing={editing}/>
-    </div>
-
-
-    </div>
-
   );
 };
 
-export default App;
 
+App.propTypes = {
+  pace: PropTypes.string,
+  isEditing: PropTypes.bool
+};
+
+
+export default App;

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import PropTypes from 'prop-types';
+
 
 const Table = ({ data, columns, handleEdit, handleDelete }) => {
   return (
@@ -35,5 +36,14 @@ const Table = ({ data, columns, handleEdit, handleDelete }) => {
     </table>
   );
 };
+
+Table.propTypes = {
+  data: PropTypes.array,
+  columns: PropTypes.array,
+  handleEdit: PropTypes.func,
+  handleDelete: PropTypes.func,
+  // Add other props validations as required
+};
+
 
 export default Table;
