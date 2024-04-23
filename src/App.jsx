@@ -98,7 +98,7 @@ const App = () => {
   return (
     <div>
       <div className="header">
-        <h1>Giancarlo's Running Pace Calculator</h1>
+        <h1> Running Pace Calculator</h1>
       </div>
       <div className="table-container">
         <Table data={data} columns={columns} handleEdit={handleEdit} handleDelete={handleDelete} />
